@@ -26,7 +26,7 @@ jobs:
             delocate: auditwheel patchelf
             plat: manylinux_2_31_x86_64
             vtk_libs: "libvtk*.so"
-            vtk_suffix: "/vtk-9.2/"
+            vtk_suffix: "/vtk-${{ env.VTK_MAJOR }}/"
             vtk_prefix: ""
             sed_i: "sed -i"
             compilers: ""
@@ -261,8 +261,8 @@ jobs:
 
           if [[ "$RUNNER_OS" == "Linux" ]]; then
             echo VTK symbols  
-            strings ~/opt/local/vtk-9.2.6/lib/libvtk*.so | egrep LIBC_ | grep -v @ | sort | uniq
-            strings ~/opt/local/vtk-9.2.6/lib/libvtk*.so | egrep LIBCXX_ | grep -v @ | sort | uniq
+            strings ~/opt/local/vtk-${{ env.VTK }}/lib/libvtk*.so | egrep LIBC_ | grep -v @ | sort | uniq
+            strings ~/opt/local/vtk-${{ env.VTK }}/lib/libvtk*.so | egrep LIBCXX_ | grep -v @ | sort | uniq
 
             echo OCCT symbols
             strings build/lin64/gcc/lib/*.so.7.7.2 | egrep LIBC_ | grep -v @ | sort | uniq
@@ -498,7 +498,7 @@ jobs:
               -D CMAKE_CXX_STANDARD=17 \
               -D CMAKE_CXX_FLAGS="-isystem $CONDA_PREFIX/include" \
               -D CMAKE_CXX_FLAGS="-isystem $CONDA_PREFIX/include -D_GLIBCXX_USE_CXX11_ABI=0" \
-              -D CMAKE_MODULE_LINKER_FLAGS="-L $CONDA_PREFIX/lib -L $HOME/opt/local/vtk-9.2.6/lib" \
+              -D CMAKE_MODULE_LINKER_FLAGS="-L $CONDA_PREFIX/lib -L $HOME/opt/local/vtk-${{ env.VTK }}/lib" \
               -D CMAKE_BUILD_WITH_INSTALL_RPATH=TRUE
 
           if [[ "${{ matrix.use-vtk }}" == "ON" ]]; then
@@ -619,7 +619,7 @@ jobs:
 
           if [[ "${{ matrix.use-vtk }}" == "ON" ]]; then
             PKG_NAME="cadquery_ocp"
-            ${{ matrix.sed_i }} '/requires-python/a\dependencies = [ "vtk==9.2.6" ]' pyproject.toml
+            ${{ matrix.sed_i }} '/requires-python/a\dependencies = [ "vtk==${{ env.VTK }}" ]' pyproject.toml
           else
             PKG_NAME="cadquery_ocp_novtk"
             ${{ matrix.sed_i }} 's/cadquery-ocp/cadquery-ocp-novtk/g' pyproject.toml
