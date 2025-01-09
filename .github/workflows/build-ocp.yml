@@ -26,7 +26,7 @@ jobs:
             delocate: auditwheel patchelf
             plat: manylinux_2_31_x86_64
             vtk_libs: "libvtk*.so"
-            vtk_suffix: "/vtk-${{ env.VTK_MAJOR }}/"
+            vtk_suffix: "/vtk-9.4/"
             vtk_prefix: ""
             sed_i: "sed -i"
             compilers: ""
